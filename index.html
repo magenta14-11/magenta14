@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Music mp3</title>
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+</head>
+<body>
+  <div class="main">
+      <div class="dashboard">
+       <div class="dashboard-header">
+        <div class="list-music__icon">
+          <i class="fa-solid fa-list "></i>
+          <span class="list-music__tiltle">Show Playlist</span>
+       
+        </div>
+       
+        <span class="tiltle">Now playing:</span>
+         <span class="favorite-list__icon">
+          <i class="fa-solid fa-crown"></i>
+         <span class="favorite-list__title">Favorite list</span>
+
+         </span>
+
+        
+       </div>
+        <div class="cd">
+          <img src="./img/a16.jpg" alt="" class="music-img">
+        </div>
+        <div class="music-desc">
+        <h3 class="music-name">Nevada The Victone</h3>
+        <span class="favorite-music__icon">
+         
+          </span>
+        <p class="music-author">Vicontonr</p>
+        </div>
+        <div class="progress-song">
+          <div class="progress-bar">
+            <div class="progress-bar__value" style="width:0"></div>
+          </div>
+          <div class="progress-time">
+             <span class="progress-time__current-time">00:00</span>
+             <span class="progress-time__duration">05:24</span>      
+          </div>
+        </div>
+        <div class="controls-music">
+          <div class="btn btn-repeat">
+            <i class="fa-solid fa-repeat"></i>
+          </div>
+          <div class=" btn btn-previous">
+            <i class="fa-solid fa-backward-step"></i>
+          </div>
+          <div class="btn btn-toggle-play">
+            <i class="fa-solid fa-play icon-play"></i>             
+          </div>
+          <div class="btn btn-next">
+            <i class="fa-sharp fa-solid fa-forward-step"></i>
+          </div>
+          <div class="btn btn-random">
+            <i class="fa-solid fa-shuffle"></i>
+          </div>
+        </div>
+        <div class="volume-change">
+         <div class="volume">
+          <i class="fa-solid fa-volume-high"></i>
+          <!-- <i class="fa-solid fa-volume-xmark volume__icon--mute"></i> -->
+         
+         </div>
+          <div class="volume-bar">
+            <div class="volume-bar__value" style="width: 100;"></div>
+      </div>
+      </div>
+          <audio id="audio" src=""></audio>
+      </div>
+    
+      <div class="playlist-container">
+        
+      <div class="play-list">
+        <div class="playlist-header">
+          <span class="playlist-tiltle">My playlist</span>
+          <span class="playlist-close">
+            <i class="fa-solid fa-xmark"></i>
+          </span>
+        </div>
+           <div class="play-list__song">
+
+           </div>
+        
+      </div>
+    </div>
+    <div class="favorlist-container">
+        
+      <div class="favor-list">
+        <div class="favorlist-header">
+          <span class="favorlist-tiltle">My favorite list</span>
+          <span class="favorlist-close">
+            <i class="fa-solid fa-xmark"></i>
+          </span>
+        </div>
+           <div class="favor-list__song">
+
+           </div>
+        
+      </div>
+    </div>
+  </div>
+<script >
+  
+  const $ = document.querySelector.bind(document)
+const $$ = document.querySelectorAll.bind(document)
+const playBtn = $('.btn-toggle-play')
+console.log(playBtn)
+const audio = document.getElementById('audio')
+const dashboard = $('.dashboard')
+console.log(dashboard)
+const progessSong = $('.progress-bar')
+console.log(progessSong)
+const progessValue = $('.progress-bar__value')
+console.log(progessValue)
+const progressCurrentTime = $('.progress-time__current-time')
+console.log(progressCurrentTime)
+console.log(progessSong.clientWidth)
+const progressDurationTime = $('.progress-time__duration')
+const cdRotate = $('.cd')
+const randomBtn = $('.btn-random')
+const preLoad = $('.btn-repeat ')
+const nextBtn = $('.btn-next')
+const prevBtn = $('.btn-previous')
+const repeatBtn = $('.btn-repeat')
+const volumeIcon = $('.volume')
+const volumeProgess = $('.volume-bar')
+const volumeValue = $('.volume-bar__value')
+const listIcon = $('.list-music__icon')
+const closeList = $('.playlist-close')
+const playListContainer = $('.playlist-container')
+const favoriteIcon = $('.favorite-music__icon')
+const favorList = $('.favor-list__song')
+const listFavoriteIcon = $('.favorite-list__icon')
+const favorConatiner  = $('.favorlist-container')
+const closeListFavor = $('.favorlist-close')
+const app = {
+  // Đặt một số thuôc tính mặc định để sau xử lí
+ currentIndex : 0,
+ isPlaying : false,
+ isRandom : false,
+ isRepeat : false,
+ isFavorite:false,
+ isMute : false,
+ isDrag :false,
+ currentVolume : 1,
+ songs : [
+  {
+    name : 'Suốt Đời Không Xứng',
+    author : 'Khải Đăng',
+    image : './img/a0.jpg',
+    path : './music/a0.mp3'
+  },
+  {
+    name : 'Cứ Ngỡ Là Mơ',
+    author : 'Hải Băng',
+    image : './img/a1.jpg',
+    path : './music/a1.mp3'
+  },
+  {
+    name : 'Đặt Vị Trí Của Nhau',
+    author : 'Hà My',
+    image : './img/a2.jpg',
+    path : './music/a2.mp3'
+  },
+  {
+    name : 'Hào Bước Theo Đời',
+    author : 'Hồ Quang Hiếu',
+    image : './img/a4.jpg',
+    path : './music/a4.mp3'
+  },
+  {
+    name : 'Cứu Vãn Kịp Không',
+    author : 'Vương Anh Tú',
+    image : './img/a5.jpg',
+    path : './music/a5.mp3'
+  },
+  {
+    name : 'Hôm Nay Em Cưới Rồi',
+    author : 'Khải Đăng',
+    image : './img/a6.jpg',
+    path : './music/a6.mp3'
+  },
+  {
+    name : 'Lỗi Do Em',
+    author : 'Miko Lan Trinh',
+    image : './img/a7.jpg',
+    path : './music/a7.mp3'
+  },
+  {
+    name : 'Một Tình Yêu Hai Thử Thách',
+    author : 'Luan Ken',
+    image : './img/a8.jpg',
+    path : './music/a8.mp3'
+  },
+  {
+    name : 'Quá Khứ Anh Không Thể Quên',
+    author : 'Dương Minh Tuấn',
+    image : './img/a9.jpg',
+    path : './music/a9.mp3'
+  },
+  {
+    name : 'Thì Thôi',
+    author : 'Lan Anh',
+    image : './img/a12.jpg',
+    path : './music/a12.mp3'
+  },
+],
+// Thêm bài hát vào playlist với dữ liệu của array Songs
+render : function(){
+  const htmls =  this.songs.map((song,index) => {
+    return `
+    
+   <div class="song" data-index = "${index}">
+            <div class="play-list__item-img">
+              <img src="${song.image}" alt="">
+            </div>
+            <div class="play-list__item-info">
+              <h4 class="play-list__item-name">${song.name}</h4>
+             
+              <p class="play-list__item-author">${song.author}</p>
+            </div>
+            <div class="music-wave">
+              <span class="music-wave__item"></span>
+              <span class="music-wave__item"></span>
+              <span class="music-wave__item"></span>
+              <span class="music-wave__item"></span>
+              <span class="music-wave__item"></span>
+            
+            </div>
+            <div class="play-list__item-option">
+             <i class="fa-solid fa-ellipsis"></i>
+            </div>
+          </div>
+
+   `
+  
+        })
+  $('.play-list__song').innerHTML= htmls.join('')
+ },
+//  Xử lý thay vì gọi  this.songs[this.currentIndex] thì gọi bằng  this.currentSong 
+ definedproperties : function(){
+  Object.defineProperty(this,'currentSong', {
+get:function() {
+return this.songs[this.currentIndex]
+}
+
+  })
+ },
+//  Xử lí load bài hát hiện tại
+loadCurrentSong : function(){
+  $('.favorite-music__icon').innerHTML = `
+  <i class="far fa-heart icon-heart"></i>
+          <i class="fa-solid fa-heart icon-heart--red"></i>
+          <span class="tooltip-favorite tooltip-favorite--not-added">Add to favorite</span>
+          <span class="tooltip-favorite tooltip-favorite--added">Remove favorite</span>
+  `
+$('.music-name').textContent = this.currentSong.name;
+$('.music-author').textContent = this.currentSong.author;
+$('.music-img').src = this.currentSong.image;
+audio.src = this.currentSong.path;
+;
+},
+// function xử lý next,prev,random bài hát dựa theo currentIndex
+nextSong:function(){
+  
+ this.currentIndex++
+  if(this.currentIndex > this.songs.length -1){
+    this.currentIndex = 0
+  }
+  this.loadCurrentSong()
+ },
+ prevSong : function(){
+this.currentIndex--
+if(this.currentIndex < 0){
+  this.currentIndex = this.songs.length -1
+}
+
+this.loadCurrentSong()
+ },
+
+randomSong : function(){
+let newCurrentIndex
+console.log(this.currentIndex)
+do {
+  newCurrentIndex = Math.floor(Math.random() * this.songs.length)
+} while (newCurrentIndex===this.currentIndex);
+console.log(newCurrentIndex)
+this.currentIndex = newCurrentIndex
+
+},
+
+// Xử lí thời gian của bài hát khi chạy và nhận value để xử lí( audio.currentTime và audio.duration)
+setChangeTimeAudio : function(value){
+let min = Math.floor(value/60);
+let sec = Math.floor(value%60);
+let timeAudio = '00:00';
+if(value<60 && sec<10){
+  timeAudio = '00' +':'+'0' + sec;
+}
+
+if(value<60 && value>10){
+  timeAudio = '00' + ':' + sec;
+}
+if(value>60 && sec<10){
+  timeAudio = '0' + min + ':' +'0' + sec;
+}
+if(value>60 && sec>=10){
+  timeAudio = '0' + min + ':' + sec;
+}
+if(value>600){
+  timeAudio = min + ':' + sec;
+}
+return timeAudio
+console.log(timeAudio)
+},
+
+// Xử lí sự kiện 
+ handleEvents : function(){
+  const this_ = this
+// Xử lí quay dashboard khi phát
+ const cdPlay =  cdRotate.animate([ 
+  {transform : 'rotate(360deg)'},
+],
+  {
+duration : 10000,
+iterations : Infinity
+  }
+  );
+  cdPlay.pause(),
+// Khi tải siêu dữ liệu xong
+  audio.onloadedmetadata = function(e){
+    progressDurationTime.innerText = app.setChangeTimeAudio(audio.duration)
+  }
+// khi thời gian phát của bài thay đổi
+audio.ontimeupdate = function(e){
+ const progessValuePercent = (audio.currentTime/audio.duration)*100 ; 
+ progessValue.style.width =  `${progessValuePercent}%`;
+progressCurrentTime.innerText =  app.setChangeTimeAudio(audio.currentTime);
+}
+
+// khi click vào icon favorite
+favoriteIcon.onclick = function(e){
+  this_.isFavorite=!this_.isFavorite
+favoriteIcon.classList.toggle('active',this_.isFavorite)
+
+const favorIndex = []
+  if(this_.isFavorite){
+favorIndex.push(this_.currentIndex)
+ console.log(favorIndex)
+
+ const songF = this_.songs.filter((song,index) =>{
+  
+return index==favorIndex
+  })
+const favorList =  songF.map((song,index) => {
+    return`
+    <div class="song" data-index = "${index}">
+            <div class="play-list__item-img">
+              <img src="${song.image}" alt="">
+            </div>
+            <div class="play-list__item-info">
+              <h4 class="play-list__item-name">${song.name}</h4>
+              <p class="play-list__item-author">${song.author}</p>
+            </div>
+            <div class="music-wave">
+              <span class="music-wave__item"></span>
+              <span class="music-wave__item"></span>
+              <span class="music-wave__item"></span>
+              <span class="music-wave__item"></span>
+              <span class="music-wave__item"></span>
+            
+            </div>
+            <div class="play-list__item-option">
+             <i class="fa-solid fa-ellipsis"></i>
+            </div>
+          </div>
+    `
+  })
+$('.favor-list__song').innerHTML = favorList.join('')
+}
+
+// if(this_.isFavorite && this_.isAdd){
+//   favorIndex.push(this_.currentIndex)
+//  console.log(favorIndex)
+
+//  const songF = this_.songs.filter((song,index) =>{
+  
+// return index==favorIndex
+//   })
+// const favorList =  songF.map((song,index) => {
+//     return`
+//     <div class="song" data-index = "${index}">
+//             <div class="play-list__item-img">
+//               <img src="${song.image}" alt="">
+//             </div>
+//             <div class="play-list__item-info">
+//               <h4 class="play-list__item-name">${song.name}</h4>
+//               <p class="play-list__item-author">${song.author}</p>
+//             </div>
+//             <div class="music-wave">
+//               <span class="music-wave__item"></span>
+//               <span class="music-wave__item"></span>
+//               <span class="music-wave__item"></span>
+//               <span class="music-wave__item"></span>
+//               <span class="music-wave__item"></span>
+            
+//             </div>
+//             <div class="play-list__item-option">
+//              <i class="fa-solid fa-ellipsis"></i>
+//             </div>
+//           </div>
+//     `
+//   })
+// $('.favor-list').innerHTML = favorList.join('')
+// }
+
+else{
+  
+}
+console.log(favorIndex)
+console.log(this_.currentIndex)
+
+
+}
+// Xử lí khi di chuột vào thanh tiến trình nhạc
+progessSong.onclick = function(e){
+  const width = this.clientWidth;
+  const clickX = e.offsetX;
+  const durationS = audio.duration;
+ audio.currentTime =(clickX/width)*durationS;
+}
+progessSong.onmousedown = function(e){
+  const width = this.clientWidth;
+  const clickX = e.offsetX;
+  const durationS = audio.duration;
+ audio.currentTime =(clickX/width)*durationS;
+ this_.isDrag = true
+}
+progessSong.onmousemove = function (e){
+  if(this_.isDrag){
+    const width = this.clientWidth;
+  const clickX = e.offsetX;
+  const durationS = audio.duration;
+ audio.currentTime =(clickX/width)*durationS;
+  }
+}
+// Đóng mở danh sách phát
+listFavoriteIcon.onclick = function(){
+  favorConatiner.classList.add('list-open')
+}
+closeListFavor.onclick = function(){
+  favorConatiner.classList.remove('list-open')
+
+}
+listIcon.onclick = function(){
+playListContainer.classList.add('list-open')
+}
+closeList.onclick = function(){
+  playListContainer.classList.remove('list-open')
+}
+// khi kéo thanh scrol xuống
+const cd = $('.music-img')
+console.log(cd)
+const cdwidth = cd.offsetWidth
+console.log(cdwidth)
+const cdHeight = cd.offsetHeight
+console.log(cdHeight)
+document.onscroll = function(){
+ cdPlay.play()
+const scrollTop = window.scrollY || document.documentElement.scrollTop
+const newCdWidth = cdwidth - scrollTop 
+const newOp = newCdWidth/cdwidth
+cd.style.opacity = newOp
+cd.style.width = newCdWidth +'px'
+cd.style.height = newCdWidth +'px'
+if(newCdWidth<0){
+  
+cd.style.width = 0
+cd.style.height = 0
+}
+},
+// const pageVolumeXt = e.offsetX
+// const volumeWidth = this.clientWidth
+// var percentVolume = pageVolumeXt/volumeWidth
+// audio.volume = percentVolume
+// volumeValue.style.width = `${(percentVolume)*100}%`
+
+
+// Xử lí khi click vào thanh tiến trình volume
+volumeProgess.onmousedown = function(e){
+  if(e.offsetX >= 0 && e.offsetX <= this.clientWidth){
+this_.currentVolume = e.offsetX/this.clientWidth
+audio.volume = this_.currentVolume
+volumeValue.style.width = `${(this_.currentVolume)*100}%`
+this_.isDrag = true
+if(this_.currentVolume===0){
+  this_.isMute=true
+}else{
+this_.isMute=false
+audio.volume = this_.currentVolume
+
+}
+  }
+}
+,
+volumeProgess.onmousemove = function(e){
+  if(e.offsetX >=0 && e.offsetX <=this.clientWidth){
+if(this_.isDrag){
+  console.log(e.offsetX)
+  console.log(this.clientWidth)
+  this_.currentVolume = e.offsetX/this.clientWidth
+audio.volume = this_.currentVolume
+volumeValue.style.width = `${(this_.currentVolume)*100}%`
+if(this_.currentVolume===0){
+  this_.isMute=true
+}else{
+  audio.volume = this_.currentVolume
+this_.isMute=false
+ }
+  }
+}
+},
+// Khi rời chuột khỏi thanh tiến trình volume
+document.documentElement.onmouseup = function(e){
+  this_.isDrag = false
+}
+// Xử lí khi click vào icon volume
+volumeIcon.onclick = function(){
+this_.isMute = !this_.isMute
+if(this_.isMute){
+  audio.muted = true
+
+}else{
+  audio.muted = false
+  audio.volume = this_.currentVolume
+
+}
+volumeIcon.classList.toggle('active',this_.isMute)
+if(volumeIcon.classList.contains('active')){
+volumeIcon.querySelector('i.fa-solid').classList.remove('fa-volume-high')
+volumeIcon.querySelector('i.fa-solid').classList.add('fa-volume-xmark')
+
+}else{
+  volumeIcon.querySelector('i.fa-solid').classList.remove('fa-volume-xmark')
+volumeIcon.querySelector('i.fa-solid').classList.add('fa-volume-high')
+}
+},
+audio.onvolumechange = function(){
+if(this_.isMute){
+  volumeValue.style.width = 0
+  volumeIcon.classList.add('active')
+  volumeIcon.querySelector('i.fa-solid').classList.remove('fa-volume-high')
+volumeIcon.querySelector('i.fa-solid').classList.add('fa-volume-xmark')
+}else{
+  volumeValue.style.width = this_.currentVolume*100 + '%'
+  volumeIcon.classList.remove('active')
+  volumeIcon.querySelector('i.fa-solid').classList.remove('fa-volume-xmark')
+volumeIcon.querySelector('i.fa-solid').classList.add('fa-volume-high')
+}
+}
+// khi click vào nút play 
+playBtn.onclick = function(){
+if(this_.isPlaying){
+  audio.pause()
+}
+else{
+  audio.play()
+}
+  }
+// khi audio được phát
+audio.onplay = function(){
+    cdPlay.play()
+this_.isPlaying = true
+playBtn.classList.add('playing')
+playBtn.querySelector('i.fa-solid').classList.remove('fa-play')
+playBtn.querySelector('i.fa-solid').classList.add('fa-pause')
+
+  }
+// khi audio pause
+audio.onpause = function(){
+    cdPlay.pause()
+this_.isPlaying = false
+playBtn.classList.remove('playing')
+playBtn.querySelector('i.fa-solid').classList.remove('fa-pause')
+playBtn.querySelector('i.fa-solid').classList.add('fa-play')
+  }
+// Khi  phát hết 1 bài
+audio.onended = function(){
+  if(randomBtn.classList.contains('active')){
+    this_.randomSong()
+  }else{
+    this_.nextSong()
+  }
+  this_.loadCurrentSong()
+audio.play()
+
+},
+// Khi phát ngẫu nhiên
+randomBtn.onclick = function(e){
+this_.isRandom = !this_.isRandom
+  randomBtn.classList.toggle('active',this_.isRandom)
+
+},
+// Khi next bài
+nextBtn.onclick = function(){
+  favoriteIcon.classList.remove('active')
+  this_.isFavorite=false
+  if(randomBtn.classList.contains('active')){
+    this_.randomSong()
+    console.log((randomBtn.classList.contains('active')))
+  }else{
+    this_.nextSong()
+  }
+ this_.activeSong()
+this_.loadCurrentSong()
+    audio.play()
+},
+// Khi phát lại bài
+repeatBtn.onclick = function(e){
+this_.isRepeat = !this_.isRepeat
+  repeatBtn.classList.toggle('active',this_.isRepeat)
+  if(repeatBtn.classList.contains('active')){
+audio.loop=true
+  }else{
+    audio.loop = false
+  }
+},
+// Khi click lùi bài
+prevBtn.onclick = function(){
+  favoriteIcon.classList.remove('active')
+  this_.isFavorite = false
+  if(randomBtn.classList.contains('active')){
+    this_.randomSong()}
+else{
+  this_.prevSong()
+}
+this_.activeSong()
+this_.loadCurrentSong(),
+audio.play()
+}
+ },
+//  Xử lí mute volume
+muteVolume : function(){
+  volumeValue.style.width = 0
+},
+// Xử lí khi click song trong Playlist
+activeSongList : function(){
+  const this_ = this
+ const songP = $$('.song')
+  songP.forEach((song,index)=>{
+  const optionItem = song.querySelector('.play-list__item-option')
+
+   optionItem.onclick = function(){
+    event.stopPropagation()
+   }
+    song.onclick = function(e){
+      if(e.target != optionItem && this_.currentIndex != index ){
+        this_.currentIndex = index
+        this_.activeSong()
+        this_.loadCurrentSong()
+      audio.play()
+      }
+    }
+  })
+}
+,
+// Xử lí thêm active vào song khi song đó được chạy
+ activeSong : function(){
+  const playlistSong = $$('.song')
+  const musicWave = $$('.music-wave')
+playlistSong.forEach((song,index)=>{
+if (index===this.currentIndex){
+  song.classList.add('active')
+  musicWave[index].classList.add('active')
+  console.log($('.music-wave'))
+}else{
+song.classList.remove('active')
+musicWave[index].classList.remove('active')
+
+}
+})
+
+ },
+//  Thực thi hàm (callback function)
+start : function(){
+  this.render()
+  this.handleEvents()
+  this.definedproperties()
+  this.loadCurrentSong()
+this.activeSongList()
+
+}
+
+}
+
+app.start()
+</script>
+<script src="./firebase.js"></script>
+</body>
+<style>
+  /* Xử lí khi click vào icon favorite đổi màu style internal */
+  .fa-solid.fa-heart{
+    color: #f20717;
+    display: none ;
+  }
+  /* Khi thẻ cha được thêm active thì thẻ con được áp css */
+  .favorite-music__icon.active .icon-heart--red{
+    display: block;
+    /* transform: translateX(-30px); */
+  }
+  .favorite-music__icon.active .icon-heart{
+  display: none ;
+}
+.favorite-music__icon.active .tooltip-favorite--added{
+visibility: inherit;
+}
+.tooltip-favorite--added{
+  visibility: hidden;
+}
+.favorite-music__icon.active .tooltip-favorite--not-added{
+  display: none;
+}
+  
+
+</style>
+</html>
